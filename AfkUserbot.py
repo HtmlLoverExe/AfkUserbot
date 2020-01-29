@@ -44,7 +44,7 @@ def check_saved(Client, msg):
 @bot.on_message(Filters.private & ~Filters.user("self"))
 def logger(Client, msg):
     print("[PM] Got a new message from: {}. Text: {}".format(
-        msg.from_user.username if msg.from_user.username else msg.from_user.first_name,
+        "@" + msg.from_user.username if msg.from_user.username else msg.from_user.first_name,
         str(msg.text)[0:20]))
     msg.continue_propagation()
 
