@@ -15,15 +15,13 @@ afkMessage = "Sorry, I'm currently unavaible.\n" \
              "\n" \
              "Only one message in every 30 seconds will be saved.\n" \
              "<a href=\"https://github.com/GodSaveTheDoge/AfkUserbot\">Create your own</a>" \
-
+ \
 """
 Boring stuff
 """
 
 from pyrogram import Client, Filters
 import time
-import pyrogram
-
 
 users = {}
 afk = False
@@ -31,8 +29,9 @@ accepted_users = []
 banned_users = []
 bot = Client(
     "UserbotAfk",
-    api_id = apiId,
-    api_hash = apiHash)
+    api_id=apiId,
+    api_hash=apiHash)
+
 
 @bot.on_message(Filters.private)
 def check_saved(Client, msg):
@@ -40,6 +39,7 @@ def check_saved(Client, msg):
     if not msg.from_user.id in users:
         users[msg.from_user.id] = 0
     msg.continue_propagation()
+
 
 @bot.on_message(Filters.private & ~Filters.user("self"))
 def logger(Client, msg):
@@ -64,17 +64,20 @@ def afk_command(Client, msg):
         else:
             msg.edit_text("You are afk" if afk else "You are not afk")
 
+
 @bot.on_message(Filters.user("self") & Filters.command("accept", prefixes=[".", "/", "!", "#"]))
 def accept_command(Client, msg):
     global accepted_users
     accepted_users.append(msg.chat.id)
     msg.edit_text("Accepted {}.".format(msg.chat.first_name))
 
+
 @bot.on_message(Filters.user("self") & Filters.command("ban", prefixes=[".", "/", "!", "#"]))
 def accept_command(Client, msg):
     global banned_users
     banned_users.append(msg.chat.id)
     msg.edit_text("Banned {}.".format(msg.chat.first_name))
+
 
 @bot.on_message(Filters.user("self") & Filters.command("commands", prefixes=[".", "/", "!", "#"]))
 def commands_command(Client, msg):
@@ -87,14 +90,17 @@ def commands_command(Client, msg):
                   "\n"
                   "Prefixes: . / ! #")
 
-@bot.on_message(Filters.private & ~Filters.user(accepted_users) & ~Filters.user("self"))
+
+@bot.on_message(Filters.private & ~Filters.user("self"))
 def on_private_afk_message(Client, msg):
-    if afk:
-        msg.delete()
-        if users[msg.from_user.id] + 30 < int(time.time()) and not msg.from_user.id in banned_users:
-            bot.send_message(msg.chat.id,
-                             afkMessage.replace("{original_msg}", str(msg.text)),
-                             disable_web_page_preview=True)
-            users[msg.from_user.id] = int(time.time())
+    if not msg.from_user.id in accepted_users:
+        if afk:
+            msg.delete()
+            if users[msg.from_user.id] + 30 < int(time.time()) and not msg.from_user.id in banned_users:
+                bot.send_message(msg.chat.id,
+                                 afkMessage.replace("{original_msg}", str(msg.text)),
+                                 disable_web_page_preview=True)
+                users[msg.from_user.id] = int(time.time())
+
 
 bot.run()
