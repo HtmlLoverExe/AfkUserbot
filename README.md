@@ -12,8 +12,12 @@ You can now turn on afk when you need peace and every private message will be de
 > /afk off
 - Delete every message and do not answer any more in this chat (Only in private chat)
 > /ban
+- Allow again a person to talk. (private chat, banned in the past)
+> /unban
 - Allow a person to write freely (Only in private chat)
 > /accept
+- Do not accept the person anymore (Only in private chat, allowed in the past)
+> /unaccept
 ### Prefixes
 You can use one of this prefixes: . / ! #
 so: /ban and .ban are the same.
