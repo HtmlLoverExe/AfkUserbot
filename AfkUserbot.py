@@ -14,8 +14,8 @@ afkMessage = "Sorry, I'm currently unavaible.\n" \
              "{original_msg}\n" \
              "\n" \
              "Only one message in every 30 seconds will be saved.\n" \
-             "<a href=\"https://github.com/GodSaveTheDoge/AfkUserbot\">Create your own</a>" \
- \
+             "<a href=\"https://github.com/GodSaveTheDoge/AfkUserbot\">Create your own</a>"
+
 """
 Boring stuff
 """
@@ -76,7 +76,23 @@ def accept_command(Client, msg):
 def accept_command(Client, msg):
     global banned_users
     banned_users.append(msg.chat.id)
+    if msg.chat.id in accepted_users: accepted_users.remove(accepted_users)
     msg.edit_text("Banned {}.".format(msg.chat.first_name))
+
+
+@bot.on_message(Filters.user("self") & Filters.command("unaccept", prefixes=[".", "/", "!", "#"]))
+def accept_command(Client, msg):
+    global accepted_users
+    accepted_users.remove(msg.chat.id)
+    msg.edit_text("Removed {} from accepted list.".format(msg.chat.first_name))
+
+
+@bot.on_message(Filters.user("self") & Filters.command("unban", prefixes=[".", "/", "!", "#"]))
+def accept_command(Client, msg):
+    global banned_users
+    banned_users.remove(msg.chat.id)
+    if msg.chat.id in accepted_users: accepted_users.remove(accepted_users)
+    msg.edit_text("Unbanned {}.".format(msg.chat.first_name))
 
 
 @bot.on_message(Filters.user("self") & Filters.command("commands", prefixes=[".", "/", "!", "#"]))
