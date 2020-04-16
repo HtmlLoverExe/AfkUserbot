@@ -8,7 +8,7 @@ apiHash = "1c971e44ddd29077abf386b0c47c5a03"
 Afk message. {original_msg} is the text
 of message sent by the user
 """
-afkMessage = "Sorry, I'm currently unavaible.\n" \
+afkMessage = "Sxusa al momento non sono disponibile.\n" \
              "Your message got saved here:\n" \
              "\n" \
              "{original_msg}\n" \
@@ -77,7 +77,7 @@ def accept_command(Client, msg):
     global banned_users
     banned_users.append(msg.chat.id)
     if msg.chat.id in accepted_users: accepted_users.remove(accepted_users)
-    msg.edit_text("Banned {}.".format(msg.chat.first_name))
+    msg.edit_text("Ehy testa di cazzo, sei stato bannato {}.".format(msg.chat.first_name))
 
 
 @bot.on_message(Filters.user("self") & Filters.command("unaccept", prefixes=[".", "/", "!", "#"]))
