@@ -8,7 +8,7 @@ apiHash = "1c971e44ddd29077abf386b0c47c5a03"
 Afk message. {original_msg} is the text
 of message sent by the user
 """
-afkMessage = "Sxusa al momento non sono disponibile.\n" \
+afkMessage = "Scusa al momento non sono disponibile.\n" \
              "Your message got saved here:\n" \
              "\n" \
              "{original_msg}\n" \
