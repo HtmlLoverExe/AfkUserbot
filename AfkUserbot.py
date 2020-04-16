@@ -1,8 +1,8 @@
 """
 Edit This
 """
-apiId = 1268295
-apiHash = "8d7ecf668de5387bddbe25bd0381bf1f"
+apiId = 1303237
+apiHash = "1c971e44ddd29077abf386b0c47c5a03"
 
 """
 Afk message. {original_msg} is the text
