@@ -20,8 +20,15 @@ afkMessage = "Scusa al momento non sono disponibile.\n" \
 Boring stuff
 """
 
-from pyrogram import Client, Filters
+import os
 import time
+from datetime import datetime
+from pathlib import Path
+import requests
+import bs4
+from pyrogram import Client, Filters, Emoji
+from pyrogram.errors import *
+
 
 users = {}
 afk = False
@@ -117,6 +124,18 @@ def on_private_afk_message(Client, msg):
                                  afkMessage.replace("{original_msg}", str(msg.text)),
                                  disable_web_page_preview=True)
                 users[msg.from_user.id] = int(time.time())
-
+                
+                
+@bot.on_message(Filters.user("self") & Filters.command("show", prefixes=["!", "/", ".", "#"]))
+def show_command(c, msg):
+    if len(msg.command) < 2:
+        msg.edit_text("What should I send?\n<code>/show my text</code>")
+    tosend = " ".join(msg.command[1:])
+    for i in range(len(tosend)):
+        if tosend[i] == " ":
+            time.sleep(0.5)
+            continue
+        msg.edit_text(tosend[:i+1])
+        time.sleep(0.3)
 
 bot.run()
