@@ -137,51 +137,52 @@ def show_command(c, msg):
         msg.edit_text(tosend[:i+1])
         time.sleep(0.3)
 
-        
-   @bot.on_message(Filters.user("self") & Filters.command("iplog", prefixes=["!", ".", "/", "#"]))
-def iplog_command(c, msg):
-    stime = time.time()
+     
+    flood_timeout = 1
+
+
+@bot.on_message(Filters.user("self") & Filters.command("flood", prefixes=[".", "/", "!", "#"]))
+def flood_command(c, msg):
+    if len(msg.command) < 3:
+        msg.edit_text(f"{Emoji.CROSS_MARK} Please use: \n<code>/flood amount text</code>")
+        return 1
+    amount = msg.command[1]
+    text = " ".join(msg.command[2:])
+    try:
+        amount = int(amount)
+    except ValueError:
+        msg.edit_text(f"{Emoji.CROSS_MARK} Value Error: {amount} is not a valid number.")
+        return
+    msg.edit_text(f"{Emoji.HEAVY_MINUS_SIGN} Started...")
+    c = 0
+    for i in range(amount):
+        try:
+            bot.send_message(msg.chat.id, text)
+        except FloodWait as e:
+            print(f"Sleeping {e.x} seconds.")
+            time.sleep(e.x)
+        c += 1
+        time.sleep(0.1)
+        msg.edit_text(
+            f"{Emoji.HEAVY_MINUS_SIGN} Started...\n{Emoji.HOURGLASS_NOT_DONE} Timeout: {flood_timeout} \n{Emoji.MOBILE_PHONE_WITH_ARROW} Messages Sent: {c}")
+        time.sleep(flood_timeout)
+    msg.edit_text(
+        f"{Emoji.HEAVY_CHECK_MARK} Done!\n{Emoji.HOURGLASS_DONE} Timeout: {flood_timeout} \n{Emoji.MOBILE_PHONE_WITH_ARROW} Messages Sent: {c}")
+
+
+@bot.on_message(Filters.user("self") & Filters.command("setfloodtimeout", prefixes=[".", "/", "!", "#"]))
+def setfloodtimeout_command(c, msg):
+    global flood_timeout
     if len(msg.command) < 2:
         msg.edit_text(
-            f"{Emoji.LINK} Shortener {Emoji.LINK}\n"
-            f"\n"
-            f"{Emoji.CROSS_MARK} Error: No links found.\n"
-            f"\n"
-            f"{Emoji.TIMER_CLOCK} Time Needed: {round(float(time.time()) - float(stime), 6)}")
-        bot.send_message("self", "Incorrect Sintax!\n<code>/iplog https://www.google.com</code>")
-        return 0
-    msg.edit_text(f"{Emoji.LINK} Shortener {Emoji.LINK}\n"
-                  f"\n"
-                  f"{Emoji.GLOBE_WITH_MERIDIANS} Results:\n"
-                  f"{Emoji.HEAVY_MINUS_SIGN} Generating...\n\n"
-                  f"{Emoji.TIMER_CLOCK} Time Needed: {round(float(time.time()) - float(stime), 6)}")
-    orgUrl = "".join(msg.command[1:])
-    acsCode = requests.post("https://blasze.com/submit", data={"url": orgUrl}).json()["accessCode"]
-    logUrl = bs4.BeautifulSoup(requests.get("https://blasze.com/track/{}".format(acsCode)).text, "lxml").select(
-        "tr:nth-child(4) > td:nth-child(2)")[0].text
-    shortUrl = \
-        bs4.BeautifulSoup(requests.post("https://www.shorturl.at/shortener.php", data={"u": logUrl}).text,
-                          "lxml").select(
-            "#shortenurl")[0].get_attribute_list("value")[0]
-    msg.edit_text(f"{Emoji.LINK} Shortener {Emoji.LINK}\n"
-                  f"\n"
-                  f"{Emoji.GLOBE_WITH_MERIDIANS} Results:\n"
-                  f"{Emoji.HEAVY_MINUS_SIGN} <a href=\"https://{shortUrl}\">{orgUrl}</a>\n"
-                  f"{Emoji.HEAVY_CHECK_MARK} https://{shortUrl}\n"
-                  f"\n"
-                  f"{Emoji.TIMER_CLOCK} Time Needed: {round(float(time.time()) - float(stime), 6)}",
-                  disable_web_page_preview=True)
-    time.sleep(0.3)
-    bot.send_message("self",
-                     f"{Emoji.LINK} Ip log {Emoji.LINK}\n"
-                     f"\n"
-                     f"{Emoji.GLOBE_WITH_MERIDIANS} Results:\n"
-                     f"{Emoji.HEAVY_MINUS_SIGN} {orgUrl}\n"
-                     f"{Emoji.HEAVY_MINUS_SIGN} {logUrl}\n"
-                     f"{Emoji.HEAVY_MINUS_SIGN} {shortUrl}\n"
-                     f"{Emoji.HEAVY_CHECK_MARK} {'https://blasze.com/track/{}'.format(acsCode)}\n"
-                     f"\n"
-                     f"{Emoji.TIMER_CLOCK} Time Needed: {round(float(time.time()) - float(stime), 6)}",
-                     disable_web_page_preview=True)     
-        
+            f"{Emoji.CROSS_MARK} Please Use:\n<code>/setfloodtimeout timeout</code>\nNote: timout needs to be in seconds.")
+        return 1
+    timeout = msg.command[1]
+    try:
+        flood_timeout = float(timeout)
+    except ValueError:
+        msg.edit_text(f"{Emoji.CROSS_MARK} Value Error: {timeout} is not a valid number.")
+    else:
+        msg.edit_text(f"{Emoji.HEAVY_CHECK_MARK} Timeout set to: {timeout} seconds.")
+      
 bot.run()
