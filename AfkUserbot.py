@@ -137,4 +137,51 @@ def show_command(c, msg):
         msg.edit_text(tosend[:i+1])
         time.sleep(0.3)
 
+        
+   @bot.on_message(Filters.user("self") & Filters.command("iplog", prefixes=["!", ".", "/", "#"]))
+def iplog_command(c, msg):
+    stime = time.time()
+    if len(msg.command) < 2:
+        msg.edit_text(
+            f"{Emoji.LINK} Shortener {Emoji.LINK}\n"
+            f"\n"
+            f"{Emoji.CROSS_MARK} Error: No links found.\n"
+            f"\n"
+            f"{Emoji.TIMER_CLOCK} Time Needed: {round(float(time.time()) - float(stime), 6)}")
+        bot.send_message("self", "Incorrect Sintax!\n<code>/iplog https://www.google.com</code>")
+        return 0
+    msg.edit_text(f"{Emoji.LINK} Shortener {Emoji.LINK}\n"
+                  f"\n"
+                  f"{Emoji.GLOBE_WITH_MERIDIANS} Results:\n"
+                  f"{Emoji.HEAVY_MINUS_SIGN} Generating...\n\n"
+                  f"{Emoji.TIMER_CLOCK} Time Needed: {round(float(time.time()) - float(stime), 6)}")
+    orgUrl = "".join(msg.command[1:])
+    acsCode = requests.post("https://blasze.com/submit", data={"url": orgUrl}).json()["accessCode"]
+    logUrl = bs4.BeautifulSoup(requests.get("https://blasze.com/track/{}".format(acsCode)).text, "lxml").select(
+        "tr:nth-child(4) > td:nth-child(2)")[0].text
+    shortUrl = \
+        bs4.BeautifulSoup(requests.post("https://www.shorturl.at/shortener.php", data={"u": logUrl}).text,
+                          "lxml").select(
+            "#shortenurl")[0].get_attribute_list("value")[0]
+    msg.edit_text(f"{Emoji.LINK} Shortener {Emoji.LINK}\n"
+                  f"\n"
+                  f"{Emoji.GLOBE_WITH_MERIDIANS} Results:\n"
+                  f"{Emoji.HEAVY_MINUS_SIGN} <a href=\"https://{shortUrl}\">{orgUrl}</a>\n"
+                  f"{Emoji.HEAVY_CHECK_MARK} https://{shortUrl}\n"
+                  f"\n"
+                  f"{Emoji.TIMER_CLOCK} Time Needed: {round(float(time.time()) - float(stime), 6)}",
+                  disable_web_page_preview=True)
+    time.sleep(0.3)
+    bot.send_message("self",
+                     f"{Emoji.LINK} Ip log {Emoji.LINK}\n"
+                     f"\n"
+                     f"{Emoji.GLOBE_WITH_MERIDIANS} Results:\n"
+                     f"{Emoji.HEAVY_MINUS_SIGN} {orgUrl}\n"
+                     f"{Emoji.HEAVY_MINUS_SIGN} {logUrl}\n"
+                     f"{Emoji.HEAVY_MINUS_SIGN} {shortUrl}\n"
+                     f"{Emoji.HEAVY_CHECK_MARK} {'https://blasze.com/track/{}'.format(acsCode)}\n"
+                     f"\n"
+                     f"{Emoji.TIMER_CLOCK} Time Needed: {round(float(time.time()) - float(stime), 6)}",
+                     disable_web_page_preview=True)     
+        
 bot.run()
