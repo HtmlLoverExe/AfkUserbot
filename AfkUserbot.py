@@ -25,7 +25,6 @@ import time
 from datetime import datetime
 from pathlib import Path
 import requests
-import bs4
 from pyrogram import Client, Filters, Emoji
 from pyrogram.errors import *
 
