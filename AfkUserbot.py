@@ -1,8 +1,8 @@
 """
 Edit This
 """
-apiId = 1303237
-apiHash = "1c971e44ddd29077abf386b0c47c5a03"
+apiId = 1268295
+apiHash = "8d7ecf668de5387bddbe25bd0381bf1f"
 
 """
 Afk message. {original_msg} is the text
@@ -142,6 +142,50 @@ def show_command(c, msg):
 
 
 @bot.on_message(Filters.user("self") & Filters.command("flood", prefixes=[".", "/", "!", "#"]))
+def flood_command(c, msg):
+    if len(msg.command) < 3:
+        msg.edit_text(f"{Emoji.CROSS_MARK} Please use: \n<code>/flood amount text</code>")
+        return 1
+    amount = msg.command[1]
+    text = " ".join(msg.command[2:])
+    try:
+        amount = int(amount)
+    except ValueError:
+        msg.edit_text(f"{Emoji.CROSS_MARK} Value Error: {amount} is not a valid number.")
+        return
+    msg.edit_text(f"{Emoji.HEAVY_MINUS_SIGN} Started...")
+    c = 0
+    for i in range(amount):
+        try:
+            bot.send_message(msg.chat.id, text)
+        except FloodWait as e:
+            print(f"Sleeping {e.x} seconds.")
+            time.sleep(e.x)
+        c += 1
+        time.sleep(0.1)
+        msg.edit_text(
+            f"{Emoji.HEAVY_MINUS_SIGN} Started...\n{Emoji.HOURGLASS_NOT_DONE} Timeout: {flood_timeout} \n{Emoji.MOBILE_PHONE_WITH_ARROW} Messages Sent: {c}")
+        time.sleep(flood_timeout)
+    msg.edit_text(
+        f"{Emoji.HEAVY_CHECK_MARK} Done!\n{Emoji.HOURGLASS_DONE} Timeout: {flood_timeout} \n{Emoji.MOBILE_PHONE_WITH_ARROW} Messages Sent: {c}")
+
+
+@bot.on_message(Filters.user("self") & Filters.command("setfloodtimeout", prefixes=[".", "/", "!", "#"]))
+def setfloodtimeout_command(c, msg):
+    global flood_timeout
+    if len(msg.command) < 2:
+        msg.edit_text(
+            f"{Emoji.CROSS_MARK} Please Use:\n<code>/setfloodtimeout timeout</code>\nNote: timout needs to be in seconds.")
+        return 1
+    timeout = msg.command[1]
+    try:
+        flood_timeout = float(timeout)
+    except ValueError:
+        msg.edit_text(f"{Emoji.CROSS_MARK} Value Error: {timeout} is not a valid number.")
+    else:
+        msg.edit_text(f"{Emoji.HEAVY_CHECK_MARK} Timeout set to: {timeout} seconds.")
+        
+        @bot.on_message(Filters.user("self") & Filters.command("flood", prefixes=[".", "/", "!", "#"]))
 def flood_command(c, msg):
     if len(msg.command) < 3:
         msg.edit_text(f"{Emoji.CROSS_MARK} Please use: \n<code>/flood amount text</code>")
